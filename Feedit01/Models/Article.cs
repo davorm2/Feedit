@@ -34,5 +34,7 @@ namespace Feedit01.Models
         public string UserId { get; set; }
 
         public int voteState { get; set; }
+
+        public bool Deleted { get; set; }
     }
 }

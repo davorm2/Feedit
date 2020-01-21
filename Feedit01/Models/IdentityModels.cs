@@ -26,7 +26,6 @@ namespace Feedit01.Models
         }
 
         public virtual DbSet<Article> Articles { get; set; }
-        public virtual DbSet<Voting> Voting { get; set; }
 
         public static ApplicationDbContext Create()
         {

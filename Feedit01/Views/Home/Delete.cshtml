@@ -2,10 +2,10 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    string view = "Index";
+    string view = "Delete";
 }
 
-@using (Html.BeginForm(view, "Home", FormMethod.Get))
+@using (Html.BeginForm(view, "Home", FormMethod.Post))
 {
     <p>
         <div class="form-inline">
@@ -31,7 +31,7 @@
 
         </div>
     </p>
-}
+
 <table class="table">
     <tr style="background-color:ghostwhite">
         <th>
@@ -43,7 +43,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Author)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayName("Delete")
+        </th>
     </tr>
 
     @foreach (var item in Model)
@@ -59,18 +61,18 @@
                 @Html.DisplayFor(modelItem => item.Author)
             </td>
             <td>
-                <button type="button" class="btn btn-xs btn-success" onclick="location.href='@Url.Action("VoteUp", "Home", new { id=item.Id })'" @{ if(item.voteState == 1) { 
-             @:disabled="disabled" 
-        } }>
-                    <span class="glyphicon glyphicon-arrow-up"></span>
-                </button>
-                <button type="button" class="btn btn-xs btn-danger" onclick="location.href='@Url.Action("VoteDown", "Home", new { id=item.Id })'" @{ if(item.voteState == 2) { 
-             @:disabled="disabled" 
-        } }>
-                    <span class="glyphicon glyphicon-arrow-down"></span>
-                </button>
+                <input type="checkbox" name="idsToDelete" id="idsToDelete" value="@item.Id" />
             </td>
         </tr>
     }
 
 </table>
+
+     <p>
+         <div class="pull-right">
+             <button type="submit" class="btn btn-danger" onclick="location.href'@Url.Action("Delete", "Home" )">
+             <span class="glyphicon glyphicon-trash"></span> Delete
+             </button>
+         </div>
+     </p>
+}
