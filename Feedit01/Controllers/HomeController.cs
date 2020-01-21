@@ -46,77 +46,7 @@ namespace Feedit01.Controllers
 
             return View(articleSort.ToList());
         }
-
-        [Authorize]
-        public ActionResult HeadlineList(string sortOrder, string currentFilter, string searchString)
-        {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.HeadlineSortParam = string.IsNullOrEmpty(sortOrder) ? "headline_desc" : "";
-            ViewBag.VoteSortParam = sortOrder == "vote_desc" ? "vote" : "vote_desc";
-            ViewBag.AuthorSortParam = sortOrder == "author" ? "author_desc" : "author";
-
-            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString);
-
-            switch (sortOrder)
-            {
-                case "vote":
-                    articleSort = articleSort.OrderBy(a => a.Votes);
-                    break;
-                case "vote_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Votes);
-                    break;
-                case "author":
-                    articleSort = articleSort.OrderBy(a => a.Author);
-                    break;
-                case "author_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Author);
-                    break;
-                case "headline_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Headline);
-                    break;
-                default:
-                    articleSort = articleSort.OrderBy(a => a.Headline);
-                    break;
-            }
-
-            return View(articleSort.ToList());
-        }
-
-        [Authorize]
-        public ActionResult AuthorList(string sortOrder, string currentFilter, string searchString)
-        {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.AuthorSortParam = string.IsNullOrEmpty(sortOrder) ? "author_desc" : "";
-            ViewBag.VoteSortParam = sortOrder == "vote_desc" ? "vote" : "vote_desc";
-            ViewBag.HeadlineSortParam = sortOrder == "headline" ? "headline_desc" : "headline";
-
-            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString);
-
-            switch (sortOrder)
-            {
-                case "vote":
-                    articleSort = articleSort.OrderBy(a => a.Votes);
-                    break;
-                case "vote_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Votes);
-                    break;
-                case "headline":
-                    articleSort = articleSort.OrderBy(a => a.Headline);
-                    break;
-                case "headline_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Headline);
-                    break;
-                case "author_desc":
-                    articleSort = articleSort.OrderByDescending(a => a.Author);
-                    break;
-                default:
-                    articleSort = articleSort.OrderBy(a => a.Author);
-                    break;
-            }
-
-            return View(articleSort.ToList());
-        }
-
+        
         [Authorize]
         public ActionResult Create()
         {
@@ -146,23 +76,40 @@ namespace Feedit01.Controllers
         }
 
         [Authorize]
-        public ActionResult VoteUp(int id, string view)
+        public ActionResult VoteUp(int id)
         {
             Article article = db.Articles.Find(id);
             article.Votes += 1;
+            voteState(article, true);
             db.SaveChanges();
 
-            return RedirectToAction(view);
+            return RedirectToAction("Index");
         }
 
         [Authorize]
-        public ActionResult VoteDown(int id, string view)
+        public ActionResult VoteDown(int id)
         {
             Article article = db.Articles.Find(id);
             article.Votes -= 1;
+            voteState(article, false);
             db.SaveChanges();
 
-            return RedirectToAction(view);
+            return RedirectToAction("Index");
+        }
+
+        private static void voteState(Article article, bool upVote)
+        {
+            if (article.voteState == 0)
+            {
+                if (upVote)
+                    article.voteState = 1;
+                else
+                    article.voteState = 2;
+            }
+            else
+            {
+                article.voteState = 0;
+            }
         }
 
         private IQueryable<Article> ArticleSort(string currentFilter, string searchString)

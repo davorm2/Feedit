@@ -32,5 +32,7 @@ namespace Feedit01.Models
         public DateTime Date { get; set; }
 
         public string UserId { get; set; }
+
+        public int voteState { get; set; }
     }
 }

@@ -2,9 +2,10 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var view = "Index";
 }
 
-@using (Html.BeginForm("Index", "Home", FormMethod.Get))
+@using (Html.BeginForm(view, "Home", FormMethod.Get))
 {
     <p>
         <div class="form-inline">
@@ -15,14 +16,15 @@
                     <button class="btn btn-success">Sorting</button>
                     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="~/Home/HeadlineList">Headline</a></li>
-                        <li><a href="~/Home/AuthorList">Author</a></li>
+                        <li>@Html.ActionLink("Votes", view, new { sortOrder = ViewBag.VoteSortParam, currentFilter = ViewBag.CurrentFilter })</li>
+                        <li>@Html.ActionLink("Headline", view, new { sortOrder = ViewBag.HeadlineSortParam, currentFilter = ViewBag.CurrentFilter })</li>
+                        <li>@Html.ActionLink("Author", view, new { sortOrder = ViewBag.AuthorSortParam, currentFilter = ViewBag.CurrentFilter })</li>
                     </ul>
                 </div>
             </div>
 
             <div class="form-group pull-right">
-                <a href="~/Home/Index" class="btn btn-warning">Reset</a>
+                <a href='@string.Format("~/Home/", view)' class="btn btn-warning">Reset</a>
                 <input type="text" class="form-control input-group-sm" placeholder="Type headline.." name="searchString" @ViewBag.CurrentFilter as string />
                 <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
@@ -33,38 +35,42 @@
 <table class="table">
     <tr style="background-color:ghostwhite">
         <th>
-            @Html.ActionLink("Votes", "Index", new { sortOrder = ViewBag.VoteSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.DisplayNameFor(model => model.Votes)
         </th>
         <th>
-            @Html.ActionLink("Headline", "Index", new { sortOrder = ViewBag.HeadlineSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.DisplayNameFor(model => model.Headline)
         </th>
         <th>
-            @Html.ActionLink("Author", "Index", new { sortOrder = ViewBag.AuthorSortParam, currentFilter = ViewBag.CurrentFilter })
+            @Html.DisplayNameFor(model => model.Author)
         </th>
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Votes)
-        </td>
-        <td>
-            <a href=@Html.DisplayFor(modelItem => item.Url)>@Html.DisplayFor(modelItem => item.Headline)</a>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Author)
-        </td>
-        <td>
-            <button type="button" class="btn btn-xs btn-success" onclick="location.href='@Url.Action("VoteUp", "Home", new { id=item.Id, view="Index" })'">
-                <span class="glyphicon glyphicon-arrow-up"></span>
-            </button>
-            <button type="button" class="btn btn-xs btn-danger" onclick="location.href='@Url.Action("VoteDown", "Home", new { id=item.Id, view="Index" })'">
-                <span class="glyphicon glyphicon-arrow-down"></span>
-            </button>
-        </td>
-    </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Votes)
+            </td>
+            <td>
+                <a href=@Html.DisplayFor(modelItem => item.Url)>@Html.DisplayFor(modelItem => item.Headline)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                <button type="button" class="btn btn-xs btn-success" onclick="location.href='@Url.Action("VoteUp", "Home", new { id=item.Id })'" @{ if(item.voteState == 1) { 
+             @:disabled="disabled" 
+        } }>
+                    <span class="glyphicon glyphicon-arrow-up"></span>
+                </button>
+                <button type="button" class="btn btn-xs btn-danger" onclick="location.href='@Url.Action("VoteDown", "Home", new { id=item.Id })'" @{ if(item.voteState == 2) { 
+             @:disabled="disabled" 
+        } }>
+                    <span class="glyphicon glyphicon-arrow-down"></span>
+                </button>
+            </td>
+        </tr>
     }
 
 </table>
