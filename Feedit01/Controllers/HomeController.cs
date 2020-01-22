@@ -135,12 +135,19 @@ namespace Feedit01.Controllers
         [Authorize]
         public ActionResult Delete(IEnumerable<int> idsToDelete)
         {
-            foreach(int id in idsToDelete)
+            if (idsToDelete == null)
             {
-                Article article = db.Articles.Find(id);
-                article.Deleted = true;
+                return RedirectToAction("Index");
             }
-            db.SaveChanges();
+            else
+            {
+                foreach (int id in idsToDelete)
+                {
+                    Article article = db.Articles.Find(id);
+                    article.Deleted = true;
+                }
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }

@@ -8,7 +8,7 @@
 @using (Html.BeginForm(view, "Home", FormMethod.Get))
 {
     <p>
-        <div class="form-inline">
+        <div class="form-inline" style="margin-top:20px">
 
             <div class="form-group pull-left" style="margin-bottom:20px">
                 <input type="button" value="Add new article" class="btn btn-info" onclick="location.href='@Url.Action("Create", "Home")'" />
