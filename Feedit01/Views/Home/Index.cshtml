@@ -1,9 +1,12 @@
-﻿@model IEnumerable<Feedit01.Models.Article>
+﻿@model IPagedList<Feedit01.Models.Article>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     string view = "Index";
 }
+
+@using PagedList.Mvc;
+@using PagedList;
 
 @using (Html.BeginForm(view, "Home", FormMethod.Get))
 {
@@ -16,9 +19,9 @@
                     <button class="btn btn-success">Sorting</button>
                     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li>@Html.ActionLink("Votes", view, new { sortOrder = ViewBag.VoteSortParam, currentFilter = ViewBag.CurrentFilter })</li>
-                        <li>@Html.ActionLink("Headline", view, new { sortOrder = ViewBag.HeadlineSortParam, currentFilter = ViewBag.CurrentFilter })</li>
-                        <li>@Html.ActionLink("Author", view, new { sortOrder = ViewBag.AuthorSortParam, currentFilter = ViewBag.CurrentFilter })</li>
+                        <li>@Html.ActionLink("Votes", view, new { sortOrder = ViewBag.VoteSortParam, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })</li>
+                        <li>@Html.ActionLink("Headline", view, new { sortOrder = ViewBag.HeadlineSortParam, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })</li>
+                        <li>@Html.ActionLink("Author", view, new { sortOrder = ViewBag.AuthorSortParam, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })</li>
                     </ul>
                 </div>
             </div>
@@ -35,13 +38,13 @@
 <table class="table">
     <tr style="background-color:ghostwhite">
         <th>
-            @Html.DisplayNameFor(model => model.Votes)
+            @Html.DisplayNameFor(model => model.First().Votes)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Headline)
+            @Html.DisplayNameFor(model => model.First().Headline)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Author)
+            @Html.DisplayNameFor(model => model.First().Author)
         </th>
         <th></th>
     </tr>
@@ -59,14 +62,12 @@
                 @Html.DisplayFor(modelItem => item.Author)
             </td>
             <td>
-                <button type="button" class="btn btn-xs btn-success" onclick="location.href='@Url.Action("VoteUp", "Home", new { id=item.Id })'" @{ if(item.voteState == 1) { 
-             @:disabled="disabled" 
-        } }>
+                <button type="button" class="btn btn-xs btn-success" onclick="location.href='@Url.Action("VoteUp", "Home", new { id=item.Id })'" @{ if (item.voteState == 1) { @: disabled="disabled"
+                        } }>
                     <span class="glyphicon glyphicon-arrow-up"></span>
                 </button>
-                <button type="button" class="btn btn-xs btn-danger" onclick="location.href='@Url.Action("VoteDown", "Home", new { id=item.Id })'" @{ if(item.voteState == 2) { 
-             @:disabled="disabled" 
-        } }>
+                <button type="button" class="btn btn-xs btn-danger" onclick="location.href='@Url.Action("VoteDown", "Home", new { id=item.Id })'" @{ if (item.voteState == 2) { @: disabled="disabled"
+                        } }>
                     <span class="glyphicon glyphicon-arrow-down"></span>
                 </button>
             </td>
@@ -74,3 +75,17 @@
     }
 
 </table>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action(view, "Home", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+    Number of articles per page:
+<div class="btn-group" role="group">
+    <button class="btn btn-success">@ViewBag.CurrentPageSize</button>
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right">
+        <li>@Html.ActionLink("10", view, new { size = ViewBag.Size10, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })</li>
+        <li>@Html.ActionLink("25", view, new { size = ViewBag.Size25, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })</li>
+        <li>@Html.ActionLink("50", view, new { size = ViewBag.Size50, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })</li>
+    </ul>
+</div>

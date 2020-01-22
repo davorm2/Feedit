@@ -6,7 +6,7 @@
         @Html.AntiForgeryToken()
             
                 <div class="btn-group" style="padding-top:7px">
-                        <button class="btn btn-default" style="float:left" onclick="location.href='@Url.Action("Delete", "Home")'">Welcome, @User.Identity.GetUserName()</button>                  
+                        <button type="button" style="float:left" class="btn btn-default" onclick="location.href='@Url.Action("Delete", "Home")'">Welcome, @User.Identity.GetUserName()</button>                  
                 </div>
                     <div class="btn-group" style="padding-top:7px">
                         <button class="btn btn-default" style="float:right" onclick="javascript:document.getElementById('logoutForm').submit()">Log off</button>

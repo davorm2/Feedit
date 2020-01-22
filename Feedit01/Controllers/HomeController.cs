@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using PagedList.Mvc;
+using PagedList;
 
 namespace Feedit01.Controllers
 {
@@ -13,14 +15,16 @@ namespace Feedit01.Controllers
         ApplicationDbContext db = new ApplicationDbContext();
 
         [Authorize]
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? size)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.VoteSortParam = string.IsNullOrEmpty(sortOrder) ? "vote" : "";
             ViewBag.HeadlineSortParam = sortOrder == "headline" ? "headline_desc" : "headline";
             ViewBag.AuthorSortParam = sortOrder == "author" ? "author_desc" : "author";
-                       
-            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString);
+
+            size = PageSize(size);
+
+            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString, page);
 
             switch (sortOrder)
             {
@@ -44,18 +48,35 @@ namespace Feedit01.Controllers
                     break;
             }
 
-            return View(articleSort.ToList());
+            int pageSize = ViewBag.CurrentPageSize;
+            int pageNumber = (page ?? 1);
+
+            return View(articleSort.ToList().ToPagedList(pageNumber, pageSize));
+        }
+
+        private int? PageSize(int? size)
+        {
+            ViewBag.Size10 = 10;
+            ViewBag.Size25 = 25;
+            ViewBag.Size50 = 50;
+
+            if (size == null) size = 10;
+            ViewBag.CurrentPageSize = size;
+
+            return size;
         }
 
         [Authorize]
-        public ActionResult Delete(string sortOrder, string currentFilter, string searchString)
+        public ActionResult Delete(string sortOrder, string currentFilter, string searchString, int? page, int? size)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.VoteSortParam = string.IsNullOrEmpty(sortOrder) ? "vote" : "";
             ViewBag.HeadlineSortParam = sortOrder == "headline" ? "headline_desc" : "headline";
             ViewBag.AuthorSortParam = sortOrder == "author" ? "author_desc" : "author";
 
-            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString);
+            size = PageSize(size);
+
+            IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString, page);
 
             switch (sortOrder)
             {
@@ -79,7 +100,10 @@ namespace Feedit01.Controllers
                     break;
             }
 
-            return View(articleSort.ToList());
+            int pageSize = ViewBag.CurrentPageSize;
+            int pageNumber = (page ?? 1);
+
+            return View(articleSort.ToList().ToPagedList(pageNumber, pageSize));
         }
 
         [Authorize]
@@ -167,9 +191,13 @@ namespace Feedit01.Controllers
             }
         }
 
-        private IQueryable<Article> ArticleSort(string currentFilter, string searchString)
+        private IQueryable<Article> ArticleSort(string currentFilter, string searchString, int? page)
         {
-            if (searchString == null)
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
             {
                 searchString = currentFilter;
             }
