@@ -35,6 +35,8 @@ namespace Feedit01.Controllers
             size = PageSize(size);
 
             IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString, page);
+                        
+            ViewBag.Articles = articleSort.Count();
 
             switch (sortOrder)
             {
@@ -84,6 +86,8 @@ namespace Feedit01.Controllers
             size = PageSize(size);
 
             IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString, page);
+
+            ViewBag.Articles = articleSort.Count();
 
             switch (sortOrder)
             {

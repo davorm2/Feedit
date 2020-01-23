@@ -26,7 +26,7 @@
                 </div>
                 @if (ViewBag.Vote != null)
                 {
-                    if (ViewBag.Vote == 1)
+                    if (ViewBag.Vote == 0)
                     {
                         <input type="button" value="Vaš glas je uspješno zaprimljen" class="btn alert-danger" id="deleteSuccess" />
                     }
@@ -86,6 +86,11 @@
     }
 
 </table>
+
+@if (ViewBag.Articles == 0)
+{
+   <h1 class="text-danger">Trenutno nema članaka za prikaz</h1>
+}
 
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 @Html.PagedListPager(Model, page => Url.Action(view, "Home", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize }))

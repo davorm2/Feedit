@@ -3,7 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     string view = "Delete";
-    }
+}
 
 @using PagedList.Mvc;
 @using PagedList;
@@ -43,8 +43,8 @@
                 <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
 
-            </div>
-</p>
+        </div>
+    </p>
 
     <table class="table">
         <tr style="background-color:ghostwhite">
@@ -81,7 +81,10 @@
         }
 
     </table>
-
+    if (ViewBag.Articles == 0)
+    {
+        <h1 class="text-danger">Trenutno nema članaka za prikaz</h1>
+    }
     <p>
         <div class="pull-right">
             <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Home", new { sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })'">
