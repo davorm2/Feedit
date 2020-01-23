@@ -23,6 +23,15 @@ namespace Feedit01.Controllers
             ViewBag.HeadlineSortParam = sortOrder == "headline" ? "headline_desc" : "headline";
             ViewBag.AuthorSortParam = sortOrder == "author" ? "author_desc" : "author";
 
+            if (TempData["vote"] != null)
+            {
+                ViewBag.Vote = TempData["vote"];
+            }
+            else
+            {
+                ViewBag.Vote = null;
+            }
+
             size = PageSize(size);
 
             IQueryable<Article> articleSort = ArticleSort(currentFilter, searchString, page);
@@ -198,6 +207,8 @@ namespace Feedit01.Controllers
             voteState(article, true);
             db.SaveChanges();
 
+            TempData["vote"] = 1;
+
             return RedirectToAction("Index");
         }
 
@@ -208,6 +219,8 @@ namespace Feedit01.Controllers
             article.Votes -= 1;
             voteState(article, false);
             db.SaveChanges();
+
+            TempData["vote"] = 0;
 
             return RedirectToAction("Index");
         }
