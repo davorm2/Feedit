@@ -4,14 +4,20 @@
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
-            
-                <div class="btn-group" style="padding-top:7px">
-                        <button type="button" style="float:left" class="btn btn-default" onclick="location.href='@Url.Action("Delete", "Home", new { sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })'">Welcome, @User.Identity.GetUserName()</button>                  
-                </div>
-                    <div class="btn-group" style="padding-top:7px">
-                        <button class="btn btn-default" style="float:right" onclick="javascript:document.getElementById('logoutForm').submit()">Log off</button>
-                    </div>
-              
+
+        <div class="btn-group" style="padding-top:7px">
+            <button type="button" style="float:left" class="btn btn-default" onclick="location.href='@Url.Action("Delete", "Home", new { sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize })'">Welcome, @User.Identity.GetUserName()</button>
+        </div>
+        <div class="btn-group" style="padding-top:7px">
+            <button class="btn btn-default" style="float:right" onclick="javascript:document.getElementById('logoutForm').submit()">Log off</button>
+        </div>
+
     }
- }
-            
+}
+else
+{
+        <ul class="nav navbar-nav navbar-right">
+            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+        </ul>
+}
+
