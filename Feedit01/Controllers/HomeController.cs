@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using PagedList.Mvc;
 using PagedList;
+using System.Net;
 
 namespace Feedit01.Controllers
 {
@@ -54,18 +55,6 @@ namespace Feedit01.Controllers
             return View(articleSort.ToList().ToPagedList(pageNumber, pageSize));
         }
 
-        private int? PageSize(int? size)
-        {
-            ViewBag.Size10 = 10;
-            ViewBag.Size25 = 25;
-            ViewBag.Size50 = 50;
-
-            if (size == null) size = 10;
-            ViewBag.CurrentPageSize = size;
-
-            return size;
-        }
-
         [Authorize]
         public ActionResult Delete(string sortOrder, string currentFilter, string searchString, int? page, int? size)
         {
@@ -73,6 +62,15 @@ namespace Feedit01.Controllers
             ViewBag.VoteSortParam = string.IsNullOrEmpty(sortOrder) ? "vote" : "";
             ViewBag.HeadlineSortParam = sortOrder == "headline" ? "headline_desc" : "headline";
             ViewBag.AuthorSortParam = sortOrder == "author" ? "author_desc" : "author";
+
+            if (TempData["deletedArticles"] != null)
+            {
+                ViewBag.DeletedArticles = TempData["deletedArticles"];
+            }
+            else
+            {
+                ViewBag.DeletedArticles = null;
+            }
 
             size = PageSize(size);
 
@@ -122,15 +120,74 @@ namespace Feedit01.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Articles.Add(newArticle);
-                db.SaveChanges();
+                bool isUrlValid = urlExist(newArticle.Url);
 
-                return RedirectToAction("Index");
+                if (isUrlValid)
+                {
+                    db.Articles.Add(newArticle);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }                
+
+                else 
+                {
+                    ViewBag.ValidUrl = 0;
+                    ViewBag.DateNow = DateTime.Now.ToString();
+                    ViewBag.UserId = User.Identity.GetUserId();
+                    ViewBag.UserName = User.Identity.GetUserName();
+
+                    return View();
+                }
             }
             else
             {
                 return View();
             }
+        }
+
+        public bool urlExist(string url)
+        {
+            try
+            {
+                HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+                req.Method = "HEAD";
+                HttpWebResponse res = req.GetResponse() as HttpWebResponse;
+                res.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult Delete(IEnumerable<int> idsToDelete, string sortOrder, string currentFilter, string searchString, int? page, int? size)
+        {
+            int countArticles;
+
+            if (idsToDelete == null)
+            {
+                countArticles = 0;
+            }
+            else
+            {
+                foreach (int id in idsToDelete)
+                {
+                    Article article = db.Articles.Find(id);
+                    article.Deleted = true;
+                }
+                db.SaveChanges();
+
+                countArticles = idsToDelete.Count();
+            }
+
+            TempData["deletedArticles"] = countArticles;
+
+            return RedirectToAction("Delete");
         }
 
         [Authorize]
@@ -151,27 +208,6 @@ namespace Feedit01.Controllers
             article.Votes -= 1;
             voteState(article, false);
             db.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        [Authorize]
-        public ActionResult Delete(IEnumerable<int> idsToDelete)
-        {
-            if (idsToDelete == null)
-            {
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                foreach (int id in idsToDelete)
-                {
-                    Article article = db.Articles.Find(id);
-                    article.Deleted = true;
-                }
-                db.SaveChanges();
-            }
 
             return RedirectToAction("Index");
         }
@@ -214,6 +250,14 @@ namespace Feedit01.Controllers
             }
 
             return articleSort;
+        }
+
+        private int? PageSize(int? size)
+        {
+            if (size == null) size = 10;
+            ViewBag.CurrentPageSize = size;
+
+            return size;
         }
     }
 }

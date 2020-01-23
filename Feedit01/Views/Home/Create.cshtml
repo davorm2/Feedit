@@ -31,7 +31,7 @@
         @Html.Label("By user:", htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled", @Value = ViewBag.UserName } })
-            @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })            
         </div>
     </div>
 
@@ -48,6 +48,10 @@
         <div class="col-md-10">
             @Html.EditorFor(model => model.Url, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.Url, "", new { @class = "text-danger" })
+            @if (ViewBag.ValidUrl == 0)
+            {
+                <p class = "text-danger">Uneseni link nije ispravan</p>
+            }
         </div>
     </div>
 
