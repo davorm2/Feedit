@@ -26,7 +26,7 @@
                 </div>
                 @if (ViewBag.Vote != null)
                 {
-                    if (ViewBag.Vote == 0)
+                    if (ViewBag.Vote == 1)
                     {
                         <input type="button" value="Vaš glas je uspješno zaprimljen" class="btn alert-danger" id="deleteSuccess" />
                     }
@@ -38,7 +38,7 @@
             </div>
 
             <div class="form-group pull-right">
-                <a href='@string.Format("~/Home/", view)' class="btn btn-warning">Reset</a>
+                <a href="~/Home/Index" class="btn btn-warning">Reset</a>
                 <input type="text" class="form-control input-group-sm" placeholder="Type headline.." name="searchString" @ViewBag.CurrentFilter as string />
                 <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
