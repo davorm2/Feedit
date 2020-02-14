@@ -32,7 +32,7 @@
                     }
                     else
                     {
-                        <input type="button" value="" class="btn alert-danger" id="deleteSuccess" />
+                        <input type="button" value="Nije odabran niti jedan članak za brisanje" class="btn alert-danger" id="deleteSuccess" />
                     }
                 }
             </div>
@@ -40,7 +40,7 @@
             <div class="form-group pull-right">
                 <a href="~/Home/Delete" class="btn btn-warning">Reset</a>
                 <input type="text" class="form-control input-group-sm" placeholder="Type headline.." name="searchString" @ViewBag.CurrentFilter as string />
-                <button type="submit" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Search</button>
+                <button type="submit" name="btnSearch" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Search</button>
             </div>
 
         </div>
@@ -75,7 +75,7 @@
                     @Html.DisplayFor(modelItem => item.Author)
                 </td>
                 <td>
-                    <input type="checkbox" name="idsToDelete" id="idsToDelete" value="@item.Id" />
+                    <input type="checkbox" name="idsToDelete" value="@item.Id" />
                 </td>
             </tr>
         }

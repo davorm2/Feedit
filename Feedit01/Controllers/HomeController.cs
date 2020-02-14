@@ -178,9 +178,9 @@ namespace Feedit01.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult Delete(IEnumerable<int> idsToDelete, string sortOrder, string currentFilter, string searchString, int? page, int? size)
+        public ActionResult Delete(string btnSearch, IEnumerable<int> idsToDelete, string sortOrder, string currentFilter, string searchString, int? page, int? size)
         {
-            int countArticles;
+            int? countArticles;
 
             if (idsToDelete == null)
             {
@@ -198,7 +198,13 @@ namespace Feedit01.Controllers
                 countArticles = idsToDelete.Count();
             }
 
+            if (btnSearch != null)
+            {
+                countArticles = null;
+            }
+
             TempData["deletedArticles"] = countArticles;
+            
 
             return RedirectToAction("Delete", new { sortOrder, currentFilter, searchString, page, size});
         }
