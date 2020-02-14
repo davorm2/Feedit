@@ -8,7 +8,7 @@
 @using PagedList.Mvc;
 @using PagedList;
 
-@using (Html.BeginForm(view, "Home", FormMethod.Post))
+@using (Html.BeginForm(view, "Home", new { sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, size = ViewBag.CurrentPageSize }, FormMethod.Post))
 {
     <p>
         <div class="form-inline" style="margin-top:20px">
@@ -32,7 +32,7 @@
                     }
                     else
                     {
-                        <input type="button" value="Nijedan članak nije označen za brisanje" class="btn alert-danger" id="deleteSuccess" />
+                        <input type="button" value="" class="btn alert-danger" id="deleteSuccess" />
                     }
                 }
             </div>

@@ -200,7 +200,7 @@ namespace Feedit01.Controllers
 
             TempData["deletedArticles"] = countArticles;
 
-            return RedirectToAction("Delete");
+            return RedirectToAction("Delete", new { sortOrder, currentFilter, searchString, page, size});
         }
 
         [Authorize]
